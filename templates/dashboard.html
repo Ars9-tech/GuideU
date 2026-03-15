@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<title>Campus_Navigation_App</title>
+
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>Campus_Navigation_App</h1>
+<p class="subtitle">Explore Campus Locations</p>
+
+<!-- Location Buttons -->
+
+<form method="POST">
+
+<div class="buttons">
+
+<button type="submit" name="location" value="A Block">🏫 Academic Block</button>
+
+<button type="submit" name="location" value="Library">📚 Library</button>
+
+<button type="submit" name="location" value="Girls Hostel D1">🏠 Girls Hostel</button>
+
+<button type="submit" name="location" value="Boys Hostel C1">🏠 Boys Hostel</button>
+
+<button type="submit" name="location" value="Subway">🍕 Subway</button>
+
+<button type="submit" name="location" value="Dominos">🍕 Dominos</button>
+
+<button type="submit" name="location" value="Hotspot">☕ Hotspot</button>
+
+<button type="submit" name="location" value="Tuckshop">🥪 Tuckshop</button>
+
+</div>
+
+</form>
+
+<br>
+
+<!-- Map Button -->
+
+<a href="/map">
+<button class="map-btn">🗺 View Campus Map</button>
+</a>
+
+<br><br>
+
+<!-- Result Section -->
+
+{% if result %}
+
+<div class="result">
+
+<h2>Location Information</h2>
+
+<p><b>Category:</b> {{result.category}}</p>
+
+<p><b>Description:</b> {{result.description}}</p>
+
+</div>
+
+{% endif %}
+
+</div>
+
+</body>
+
+</html>

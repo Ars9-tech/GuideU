@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<title>GuideU Map</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+<div class="container">
+
+<h1 class="title">GuideU</h1>
+<p class="subtitle">Campus Map</p>
+
+<img src="{{ url_for('static', filename='campus_img.png') }}" width="100%">
+
+<br><br>
+
+<a href="/dashboard">
+<button>Back to Dashboard</button>
+</a>
+
+</div>
+
+</body>
+</html>
