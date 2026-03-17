@@ -2,7 +2,7 @@
 <html>
 
 <head>
-<title>GuideU Map</title>
+<title>{{location}}</title>
 <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 
@@ -10,8 +10,9 @@
 
 <div class="container">
 
-<h1 class="title">🧭 GuideU</h1>
-<p class="subtitle">Campus Map</p>
+<h1 class="title">{{location}}</h1>
+
+<p>{{description}}</p>
 
 <img src="{{ url_for('static', filename='campus_img.png') }}" width="100%">
 
