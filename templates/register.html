@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<title>Register - GuideU</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+<div class="container">
+
+<h1 class="title">Create Account</h1>
+
+<form method="POST">
+
+<input type="text" name="username" placeholder="Username" required>
+
+<input type="password" name="password" placeholder="Password" required>
+
+<button type="submit">Register</button>
+
+</form>
+
+<br>
+
+<a href="/">
+<button>Back to Login</button>
+</a>
+
+{% if error %}
+<p>{{error}}</p>
+{% endif %}
+
+</div>
+
+</body>
+</html>
