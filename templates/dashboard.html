@@ -2,8 +2,10 @@
 <html>
 
 <head>
+
 <title>GuideU</title>
 <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
 </head>
 
 <body>
@@ -13,55 +15,17 @@
 <h1 class="title">🧭 GuideU</h1>
 <p class="subtitle">Smart Campus Navigation</p>
 
-<input type="text" placeholder="Search campus location..." class="search">
-
-<form method="POST">
-
 <div class="cards">
 
-<button class="card" type="submit" name="location" value="A Block">
-🏫 Academic Blocks
-</button>
+<a href="/academic"><button class="card">🏫 Academic Blocks</button></a>
 
-<button class="card" type="submit" name="location" value="Gooble">
-🍽 Gooble
-</button>
+<a href="/food"><button class="card">🍕 Food Outlets</button></a>
 
-<button class="card" type="submit" name="location" value="Girls Hostel D1">
-🏠 Girls Hostel
-</button>
+<a href="/hostels"><button class="card">🏠 Hostels</button></a>
 
-<button class="card" type="submit" name="location" value="Boys Hostel C1">
-🏠 Boys Hostel
-</button>
-
-<button class="card" type="submit" name="location" value="Food Outlets">
-🍕 Food Outlets
-</button>
+<a href="/map/Main Campus"><button class="card">🗺 Campus Map</button></a>
 
 </div>
-
-</form>
-
-<br>
-
-<a href="/map">
-<button class="map-btn">🗺 View Campus Map</button>
-</a>
-
-{% if result %}
-
-<div class="result">
-
-<h3>Location Information</h3>
-
-<p><b>Category:</b> {{result.category}}</p>
-
-<p><b>Description:</b> {{result.description}}</p>
-
-</div>
-
-{% endif %}
 
 </div>
 
