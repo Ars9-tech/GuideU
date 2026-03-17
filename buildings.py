@@ -1,114 +1,39 @@
-from flask import Flask, render_template, request, redirect
-import sqlite3
-from buildings import locations
+locations = {
 
-app = Flask(__name__)
+"A Block":"Academic Block A",
+"B Block":"Academic Block B",
+"N Block":"Academic Block N",
+"P Block":"Academic Block P",
+"M Block":"Academic Block M",
 
-def get_db():
-    return sqlite3.connect("users.db")
+"Southern Stories":"Food outlet Southern Stories",
+"Hotspot":"Campus hotspot cafe",
+"Paid Mess":"Paid mess facility",
+"Infinity":"Infinity cafe",
+"Dominos":"Dominos pizza outlet",
+"Subway":"Subway sandwich outlet",
 
+"Gobble Ground Floor":"Ground floor dining area of Gobble mess",
+"Gobble First Floor":"First floor dining area of Gobble mess",
 
-@app.route('/', methods=['GET','POST'])
-def login():
+"D1":"Girls Hostel D1",
+"D2":"Girls Hostel D2",
+"D3":"Girls Hostel D3",
+"D4":"Girls Hostel D4",
+"D5":"Girls Hostel D5",
+"D6":"Girls Hostel D6",
 
-    error=None
+"C1":"Boys Hostel C1",
+"C2":"Boys Hostel C2",
+"C3":"Boys Hostel C3",
+"C4":"Boys Hostel C4",
+"C5":"Boys Hostel C5",
+"C6":"Boys Hostel C6",
+"C7":"Boys Hostel C7",
+"C8":"Boys Hostel C8",
+"C9":"Boys Hostel C9",
+"C10":"Boys Hostel C10",
+"C11":"Boys Hostel C11",
+"C12":"Boys Hostel C12"
 
-    if request.method=='POST':
-
-        username=request.form['username']
-        password=request.form['password']
-
-        conn=get_db()
-        cursor=conn.cursor()
-
-        cursor.execute(
-        "SELECT * FROM users WHERE username=? AND password=?",
-        (username,password)
-        )
-
-        user=cursor.fetchone()
-        conn.close()
-
-        if user:
-            return redirect("/dashboard")
-        else:
-            error="Invalid username or password"
-
-    return render_template("login.html",error=error)
-
-
-@app.route('/register',methods=['GET','POST'])
-def register():
-
-    error=None
-
-    if request.method=='POST':
-
-        username=request.form['username']
-        password=request.form['password']
-
-        conn=get_db()
-        cursor=conn.cursor()
-
-        try:
-            cursor.execute(
-            "INSERT INTO users(username,password) VALUES(?,?)",
-            (username,password)
-            )
-
-            conn.commit()
-            conn.close()
-
-            return redirect("/")
-
-        except:
-            error="Username already exists"
-
-    return render_template("register.html",error=error)
-
-
-@app.route('/dashboard')
-def dashboard():
-    return render_template("dashboard.html")
-
-
-@app.route('/academic')
-def academic():
-    return render_template("academic.html")
-
-
-@app.route('/food')
-def food():
-    return render_template("food.html")
-
-
-@app.route('/gobble')
-def gobble():
-    return render_template("gobble.html")
-
-
-@app.route('/hostels')
-def hostels():
-    return render_template("hostels.html")
-
-
-@app.route('/girls_hostel')
-def girls_hostel():
-    return render_template("girls_hostel.html")
-
-
-@app.route('/boys_hostel')
-def boys_hostel():
-    return render_template("boys_hostel.html")
-
-
-@app.route('/map/<location>')
-def map(location):
-
-    description=locations.get(location,"Location information not available")
-
-    return render_template("map.html",location=location,description=description)
-
-
-if __name__=="__main__":
-    app.run(debug=True)
+}
