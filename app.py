@@ -1,46 +1,37 @@
-from flask import Flask, render_template, request, redirect, url_for
-from buildings import buildings
+from flask import Flask, render_template, request
+from buildings import locations
 
 app = Flask(__name__)
 
-username = "student"
-password = "Campus@123"
-
-@app.route("/", methods=["GET","POST"])
+@app.route('/', methods=['GET','POST'])
 def login():
-
     error = None
 
-    if request.method == "POST":
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
 
-        user = request.form.get("username")
-        pwd = request.form.get("password")
-
-        if user == username and pwd == password:
-            return redirect(url_for("dashboard"))
+        if username == "student" and password == "Student@123":
+            return render_template("dashboard.html")
         else:
             error = "Invalid username or password"
 
     return render_template("login.html", error=error)
 
 
-@app.route("/dashboard", methods=["GET","POST"])
+@app.route('/dashboard', methods=['GET','POST'])
 def dashboard():
-
     result = None
 
-    if request.method == "POST":
-
-        location = request.form.get("location")
-
-        if location in buildings:
-            result = buildings[location]
+    if request.method == 'POST':
+        location = request.form['location']
+        result = locations.get(location)
 
     return render_template("dashboard.html", result=result)
 
 
-@app.route("/map")
-def map_view():
+@app.route('/map')
+def map():
     return render_template("map.html")
 
 
