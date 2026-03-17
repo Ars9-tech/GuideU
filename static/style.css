@@ -2,7 +2,12 @@ body{
 margin:0;
 font-family:'Segoe UI', sans-serif;
 
-background-image:url("/static/campus_img.png");
+/* Campus image background */
+
+background:
+linear-gradient(rgba(0,0,0,0.45), rgba(0,0,0,0.45)),
+url("/static/campus_img.png");
+
 background-size:cover;
 background-position:center;
 background-repeat:no-repeat;
@@ -13,67 +18,105 @@ justify-content:center;
 align-items:center;
 }
 
+/* Main container */
+
 .container{
-background:rgba(255,255,255,0.9);
+background:rgba(255,255,255,0.15);
+backdrop-filter:blur(10px);
 padding:40px;
-border-radius:12px;
-width:450px;
+border-radius:20px;
+width:550px;
 text-align:center;
-box-shadow:0 10px 30px rgba(0,0,0,0.3);
+color:white;
+box-shadow:0 10px 30px rgba(0,0,0,0.4);
 }
 
+/* Title */
+
 .title{
-font-size:36px;
-font-weight:bold;
+font-size:40px;
 margin-bottom:5px;
 }
 
 .subtitle{
-color:#555;
-margin-bottom:20px;
+opacity:0.9;
+margin-bottom:25px;
 }
+
+/* Login inputs */
 
 input{
-width:100%;
 padding:12px;
-margin:10px 0;
-border-radius:6px;
-border:1px solid #ccc;
+border-radius:8px;
+border:none;
+margin:10px;
+width:200px;
 }
 
-.buttons{
-display:grid;
-grid-template-columns:1fr 1fr;
-gap:10px;
-}
+/* Buttons */
 
 button{
-padding:12px;
+padding:10px 20px;
 border:none;
-background:#2c7be5;
-color:white;
-border-radius:6px;
+border-radius:8px;
 cursor:pointer;
+background:#ff7b54;
+color:white;
+font-size:14px;
 }
 
 button:hover{
-background:#1a5fd0;
+background:#ff5722;
 }
+
+/* Dashboard cards */
+
+.cards{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:15px;
+margin-top:20px;
+}
+
+.card{
+padding:20px;
+border:none;
+border-radius:12px;
+background:white;
+color:#333;
+font-size:16px;
+font-weight:600;
+cursor:pointer;
+transition:0.3s;
+}
+
+.card:hover{
+transform:translateY(-5px);
+box-shadow:0 8px 20px rgba(0,0,0,0.2);
+}
+
+/* Map button */
 
 .map-btn{
-background:#27ae60;
+margin-top:20px;
+padding:12px;
 width:100%;
+border-radius:10px;
+background:#ff7b54;
+color:white;
 }
+
+.map-btn:hover{
+background:#ff5722;
+}
+
+/* Result box */
 
 .result{
-background:#f4f4f4;
+background:white;
+color:#333;
 padding:15px;
-border-radius:8px;
-margin-top:15px;
+border-radius:10px;
+margin-top:20px;
 text-align:left;
-}
-
-.error{
-color:red;
-margin-top:10px;
 }
