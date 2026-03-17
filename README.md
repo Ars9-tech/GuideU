@@ -11,16 +11,4 @@ Technologies Used
 - HTML
 - CSS
 
-Project Structure
-GuideU
-│
-├── app.py
-├── buildings.py
-├── templates
-│   ├── login.html
-│   ├── dashboard.html
-│   └── map.html
-│
-├── static
-│   ├── style.css
-│   └── campus_img.png
+
