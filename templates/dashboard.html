@@ -2,40 +2,42 @@
 <html>
 
 <head>
-<title>Campus_Navigation_App</title>
-
+<title>GuideU</title>
 <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-
 </head>
 
 <body>
 
 <div class="container">
 
-<h1>Campus_Navigation_App</h1>
-<p class="subtitle">Explore Campus Locations</p>
+<h1 class="title">🧭 GuideU</h1>
+<p class="subtitle">Smart Campus Navigation</p>
 
-<!-- Location Buttons -->
+<input type="text" placeholder="Search campus location..." class="search">
 
 <form method="POST">
 
-<div class="buttons">
+<div class="cards">
 
-<button type="submit" name="location" value="A Block">🏫 Academic Block</button>
+<button class="card" type="submit" name="location" value="A Block">
+🏫 Academic Blocks
+</button>
 
-<button type="submit" name="location" value="Library">📚 Library</button>
+<button class="card" type="submit" name="location" value="Gooble">
+🍽 Gooble
+</button>
 
-<button type="submit" name="location" value="Girls Hostel D1">🏠 Girls Hostel</button>
+<button class="card" type="submit" name="location" value="Girls Hostel D1">
+🏠 Girls Hostel
+</button>
 
-<button type="submit" name="location" value="Boys Hostel C1">🏠 Boys Hostel</button>
+<button class="card" type="submit" name="location" value="Boys Hostel C1">
+🏠 Boys Hostel
+</button>
 
-<button type="submit" name="location" value="Subway">🍕 Subway</button>
-
-<button type="submit" name="location" value="Dominos">🍕 Dominos</button>
-
-<button type="submit" name="location" value="Hotspot">☕ Hotspot</button>
-
-<button type="submit" name="location" value="Tuckshop">🥪 Tuckshop</button>
+<button class="card" type="submit" name="location" value="Food Outlets">
+🍕 Food Outlets
+</button>
 
 </div>
 
@@ -43,21 +45,15 @@
 
 <br>
 
-<!-- Map Button -->
-
 <a href="/map">
 <button class="map-btn">🗺 View Campus Map</button>
 </a>
-
-<br><br>
-
-<!-- Result Section -->
 
 {% if result %}
 
 <div class="result">
 
-<h2>Location Information</h2>
+<h3>Location Information</h3>
 
 <p><b>Category:</b> {{result.category}}</p>
 
@@ -70,5 +66,4 @@
 </div>
 
 </body>
-
 </html>
