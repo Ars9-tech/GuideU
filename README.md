@@ -30,3 +30,5 @@ GuideU is a web-based campus navigation system designed to help students easily 
 2. Install dependencies:
    ```bash
    pip install flask
+   python app.py
+   http://127.0.0.1:5000/
