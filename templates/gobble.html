@@ -1,30 +1,96 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
-<title>Gobble Mess</title>
-<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GuideU | Gobble Mess</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <style>
+    body { padding-top: 70px; }
+    .main { max-width: 600px; margin: 0 auto; padding: 32px 20px 60px; }
+    .page-header { margin-bottom: 28px; }
+    .page-header h1 { font-size: 1.8rem; font-weight: 800; margin-bottom: 6px; }
+    .page-header p  { color: var(--muted); font-size: 0.9rem; }
+    .floor-list { display: flex; flex-direction: column; gap: 14px; margin-bottom: 24px; }
+    .floor-card {
+      background: var(--surface); border: 1.5px solid var(--border);
+      border-radius: 16px; padding: 20px 20px;
+      text-decoration: none; color: var(--text);
+      display: flex; align-items: center; gap: 16px;
+      transition: transform .2s, box-shadow .2s, border-color .2s;
+    }
+    .floor-card:hover { transform: translateY(-2px); box-shadow: 0 8px 20px var(--shadow); border-color: var(--blue); }
+    .floor-card-icon {
+      width: 48px; height: 48px; border-radius: 12px;
+      background: var(--blue-pale); display: flex;
+      align-items: center; justify-content: center; font-size: 1.4rem; flex-shrink: 0;
+    }
+    .floor-card h3 { font-size: 1rem; font-weight: 700; margin-bottom: 3px; }
+    .floor-card p  { font-size: 0.75rem; color: var(--muted); }
+    .floor-card .arrow { margin-left: auto; color: var(--blue); font-size: 1.2rem; }
+    .nav-btn {
+      display: flex; align-items: center; justify-content: center; gap: 10px;
+      width: 100%; padding: 14px;
+      background: linear-gradient(135deg, #2563EB, #1D4ED8);
+      color: #fff; border: none; border-radius: 12px;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 0.95rem; font-weight: 700;
+      text-decoration: none; margin-bottom: 12px;
+      box-shadow: 0 4px 16px rgba(37,99,235,0.35);
+      transition: transform .15s;
+    }
+    .nav-btn:hover { transform: translateY(-2px); }
+  </style>
 </head>
-
 <body>
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
+<div class="aurora"><div class="blob blob-1"></div><div class="blob blob-2"></div><div class="blob blob-3"></div></div>
 
-<div class="container">
+<nav class="navbar">
+  <a href="/dashboard" class="navbar-logo">📍 Guide<span>U</span></a>
+  <div class="navbar-right">
+    <a href="/campus" style="color:var(--blue);font-size:0.85rem;font-weight:600;text-decoration:none;">🗺️ Campus Map</a>
+    <a href="/food" class="logout-btn" style="border-color:var(--border);color:var(--muted);">← Food</a>
+  </div>
+</nav>
 
-<h1 class="title">Gobble Mess</h1>
+<div class="main">
+  <div class="page-header reveal">
+    <h1>🍽️ Gobble Mess</h1>
+    <p>Main mess hall · 2 floors</p>
+  </div>
 
-<div class="cards">
+  <div class="floor-list">
+    <a href="/floorplan/Gobble/0" class="floor-card reveal">
+      <div class="floor-card-icon">🏢</div>
+      <div>
+        <h3>Ground Floor</h3>
+        <p>Main dining area · Entrance</p>
+      </div>
+      <span class="arrow">›</span>
+    </a>
+    <a href="/floorplan/Gobble/1" class="floor-card reveal">
+      <div class="floor-card-icon">1️⃣</div>
+      <div>
+        <h3>First Floor</h3>
+        <p>Upper dining area</p>
+      </div>
+      <span class="arrow">›</span>
+    </a>
+  </div>
 
-<a href="/map/Gobble Ground Floor">
-<button class="card">Ground Floor</button>
-</a>
-
-<a href="/map/Gobble First Floor">
-<button class="card">First Floor</button>
-</a>
-
+  <a href="/navigate/Gobble" class="nav-btn reveal">🧭 Navigate to Gobble Mess</a>
+  <a href="/food" class="btn-secondary reveal">← Back to Food Outlets</a>
 </div>
 
-</div>
-
+<script>
+  const cur=document.getElementById('cursor'),ring=document.getElementById('cursor-ring');
+  let mx=0,my=0,rx=0,ry=0;
+  document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cur.style.left=mx+'px';cur.style.top=my+'px';});
+  (function anim(){rx+=(mx-rx)*.12;ry+=(my-ry)*.12;ring.style.left=rx+'px';ring.style.top=ry+'px';requestAnimationFrame(anim);})();
+  const obs=new IntersectionObserver(e=>e.forEach(x=>{if(x.isIntersecting)x.target.classList.add('visible')}),{threshold:0.1});
+  document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+</script>
 </body>
 </html>

@@ -1,28 +1,356 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
-<title>{{location}}</title>
-<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-</head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Navigate – {{ location }}</title>
 
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Outfit', sans-serif; background: #0f0f1a; color: #e2e8f0; display: flex; flex-direction: column; height: 100dvh; }
+
+    #map { flex: 1; min-height: 0; }
+
+    #nav-panel {
+      background: #1a1a2e;
+      border-top: 2px solid #7c3aed;
+      padding: 14px 16px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    #instruction-box {
+      background: #2d2d44;
+      border-left: 4px solid #7c3aed;
+      border-radius: 10px;
+      padding: 12px 14px;
+      font-size: 1rem;
+      line-height: 1.5;
+      min-height: 52px;
+      transition: background 0.3s;
+    }
+    #instruction-box.arrived { border-color: #10b981; background: #0d2e22; }
+
+    #stats-row {
+      display: flex;
+      gap: 12px;
+      font-size: 0.85rem;
+      color: #94a3b8;
+    }
+    .stat-pill {
+      background: #2d2d44;
+      border-radius: 20px;
+      padding: 5px 12px;
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+    .stat-pill span { color: #c4b5fd; font-weight: 600; }
+
+    #dest-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    #dest-name { font-size: 1.05rem; font-weight: 600; color: #a78bfa; }
+    #dest-desc { font-size: 0.78rem; color: #64748b; margin-top: 2px; }
+
+    #start-btn {
+      width: 100%;
+      padding: 13px;
+      background: linear-gradient(135deg, #7c3aed, #6d28d9);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: 'Outfit', sans-serif;
+      letter-spacing: 0.3px;
+      transition: opacity 0.2s;
+    }
+    #start-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+    #start-btn.arrived { background: linear-gradient(135deg, #10b981, #059669); }
+
+    #back-link {
+      text-align: center;
+      color: #64748b;
+      font-size: 0.85rem;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    #back-link:hover { color: #a78bfa; }
+
+    #reroute-banner {
+      display: none;
+      background: #422006;
+      border: 1px solid #ea580c;
+      border-radius: 8px;
+      padding: 8px 12px;
+      font-size: 0.85rem;
+      color: #fdba74;
+      text-align: center;
+    }
+  </style>
+</head>
 <body>
 
-<div class="container">
+<div id="map"></div>
 
-<h1 class="title">{{location}}</h1>
+<div id="nav-panel">
+  <div id="dest-row">
+    <div>
+      <div id="dest-name">📍 {{ location }}</div>
+      <div id="dest-desc">{{ description }}</div>
+    </div>
+  </div>
 
-<p>{{description}}</p>
+  <div id="reroute-banner">Recalculating route...</div>
 
-<img src="{{ url_for('static', filename='campus_img.png') }}" width="100%">
+  <div id="instruction-box">Waiting for your location...</div>
 
-<br><br>
+  <div id="stats-row">
+    <div class="stat-pill">Dist <span id="stat-dist">--</span></div>
+    <div class="stat-pill">ETA <span id="stat-eta">--</span></div>
+    <div class="stat-pill">Step <span id="stat-step">--</span></div>
+  </div>
 
-<a href="/dashboard">
-<button class="map-btn">Back to Dashboard</button>
-</a>
-
+  <button id="start-btn" onclick="startNavigation()" disabled>Locating you...</button>
+  <a id="back-link" onclick="history.back()">← Go back</a>
 </div>
+
+<script>
+  // ── Config ──────────────────────────────────────────────────────────────────
+  const DEST_LAT  = {{ lat }};
+  const DEST_LNG  = {{ lng }};
+  const DEST_NAME = "{{ location }}";
+  const OSRM_URL  = "https://router.project-osrm.org/route/v1/foot";
+
+  // ── State ────────────────────────────────────────────────────────────────────
+  let userLat = null, userLng = null;
+  let routeSteps = [], currentStep = 0;
+  let routeLine = null, userMarker = null, accuracyCircle = null;
+  let watchId = null, navigating = false;
+  let lastRouteCoords = null;
+
+  // ── Map setup ────────────────────────────────────────────────────────────────
+  const map = L.map('map', { zoomControl: true }).setView([DEST_LAT, DEST_LNG], 17);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© OpenStreetMap contributors'
+  }).addTo(map);
+
+  // Destination marker
+  const destIcon = L.divIcon({
+    html: `<div style="width:20px;height:20px;background:#7c3aed;border-radius:50%;
+                       border:3px solid #fff;box-shadow:0 0 0 3px #7c3aed44;"></div>`,
+    iconSize: [20, 20], iconAnchor: [10, 10]
+  });
+  L.marker([DEST_LAT, DEST_LNG], { icon: destIcon })
+   .addTo(map)
+   .bindPopup(`<b>${DEST_NAME}</b>`)
+   .openPopup();
+
+  // User marker (pulsing dot)
+  const userIcon = L.divIcon({
+    html: `<div style="width:16px;height:16px;background:#06b6d4;border-radius:50%;
+                       border:3px solid #fff;box-shadow:0 0 0 4px #06b6d444;"></div>`,
+    iconSize: [16, 16], iconAnchor: [8, 8]
+  });
+
+  // ── Helpers ──────────────────────────────────────────────────────────────────
+  function haversine(lat1, lng1, lat2, lng2) {
+    const R = 6371000, r = Math.PI / 180;
+    const dLat = (lat2 - lat1) * r, dLng = (lng2 - lng1) * r;
+    const a = Math.sin(dLat/2)**2 + Math.cos(lat1*r)*Math.cos(lat2*r)*Math.sin(dLng/2)**2;
+    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  }
+
+  function fmtDist(m) {
+    return m >= 1000 ? (m / 1000).toFixed(2) + ' km' : Math.round(m) + ' m';
+  }
+
+  function fmtETA(s) {
+    if (s < 60) return Math.round(s) + 's';
+    if (s < 3600) return Math.round(s / 60) + ' min';
+    return (s / 3600).toFixed(1) + ' hr';
+  }
+
+  function setInstruction(text, arrived = false) {
+    const box = document.getElementById('instruction-box');
+    box.textContent = text;
+    box.className = arrived ? 'arrived' : '';
+  }
+
+  function capitalize(s) { return s ? s.charAt(0).toUpperCase() + s.slice(1) : ''; }
+
+  // ── OSRM fetch ───────────────────────────────────────────────────────────────
+  async function fetchRoute(fromLat, fromLng, toLat, toLng) {
+    const url = `${OSRM_URL}/${fromLng},${fromLat};${toLng},${toLat}` +
+                `?overview=full&geometries=geojson&steps=true`;
+    try {
+      const res  = await fetch(url);
+      const data = await res.json();
+      if (data.code !== 'Ok') return null;
+      return data.routes[0];
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function drawRoute(geojson) {
+    if (routeLine) map.removeLayer(routeLine);
+    routeLine = L.geoJSON(geojson, {
+      style: { color: '#7c3aed', weight: 6, opacity: 0.85, lineCap: 'round', lineJoin: 'round' }
+    }).addTo(map);
+  }
+
+  function parseSteps(route) {
+    const steps = [];
+    for (const leg of route.legs) {
+      for (const step of leg.steps) {
+        const type = step.maneuver.type;
+        const mod  = step.maneuver.modifier ? ' ' + step.maneuver.modifier : '';
+        const name = step.name ? ` onto ${step.name}` : '';
+        const instruction = type === 'arrive'
+          ? `You have arrived at ${DEST_NAME}!`
+          : capitalize(type) + mod + name;
+        steps.push({ instruction, distance: step.distance });
+      }
+    }
+    return steps;
+  }
+
+  // ── Geolocation init ─────────────────────────────────────────────────────────
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(pos => {
+      userLat = pos.coords.latitude;
+      userLng = pos.coords.longitude;
+
+      userMarker = L.marker([userLat, userLng], { icon: userIcon })
+        .addTo(map).bindPopup('You are here');
+
+      if (pos.coords.accuracy) {
+        accuracyCircle = L.circle([userLat, userLng], {
+          radius: pos.coords.accuracy,
+          color: '#06b6d4', fillColor: '#06b6d4', fillOpacity: 0.08,
+          weight: 1
+        }).addTo(map);
+      }
+
+      map.fitBounds([[userLat, userLng], [DEST_LAT, DEST_LNG]], { padding: [40, 40] });
+
+      const btn = document.getElementById('start-btn');
+      btn.disabled = false;
+      btn.textContent = 'Start Navigation';
+      setInstruction('Ready — tap Start Navigation to begin.');
+    }, err => {
+      setInstruction('Could not get your location. Please enable GPS and refresh.');
+    }, { enableHighAccuracy: true });
+  } else {
+    setInstruction('Geolocation is not supported by your browser.');
+  }
+
+  // ── Main navigation ──────────────────────────────────────────────────────────
+  async function startNavigation() {
+    if (navigating) return;
+    navigating = true;
+
+    const btn = document.getElementById('start-btn');
+    btn.disabled = true;
+    btn.textContent = 'Fetching route...';
+
+    const route = await fetchRoute(userLat, userLng, DEST_LAT, DEST_LNG);
+    if (!route) {
+      setInstruction('Could not fetch route. Check your internet connection.');
+      btn.disabled = false;
+      btn.textContent = 'Retry';
+      navigating = false;
+      return;
+    }
+
+    drawRoute(route.geometry);
+    lastRouteCoords = [userLat, userLng];
+    routeSteps  = parseSteps(route);
+    currentStep = 0;
+
+    document.getElementById('stat-dist').textContent = fmtDist(route.distance);
+    document.getElementById('stat-eta').textContent  = fmtETA(route.duration);
+    document.getElementById('stat-step').textContent = `1/${routeSteps.length}`;
+    setInstruction(routeSteps[0]?.instruction || 'Head toward destination.');
+
+    btn.textContent = 'Navigating...';
+
+    // Live position watch
+    watchId = navigator.geolocation.watchPosition(async pos => {
+      userLat = pos.coords.latitude;
+      userLng = pos.coords.longitude;
+
+      // Update user marker
+      if (userMarker) {
+        userMarker.setLatLng([userLat, userLng]);
+      }
+      if (accuracyCircle) {
+        accuracyCircle.setLatLng([userLat, userLng]);
+        if (pos.coords.accuracy) accuracyCircle.setRadius(pos.coords.accuracy);
+      }
+
+      const distToDest = haversine(userLat, userLng, DEST_LAT, DEST_LNG);
+
+      // Arrived check
+      if (distToDest < 15) {
+        setInstruction(`You have arrived at ${DEST_NAME}!`, true);
+        document.getElementById('stat-dist').textContent = '0 m';
+        document.getElementById('stat-eta').textContent  = 'Arrived';
+        btn.textContent = 'Arrived!';
+        btn.classList.add('arrived');
+        navigator.geolocation.clearWatch(watchId);
+        return;
+      }
+
+      // Update distance live
+      document.getElementById('stat-dist').textContent = fmtDist(distToDest);
+
+      // Advance steps: if user walked past threshold, move to next step
+      if (currentStep < routeSteps.length - 1) {
+        const threshold = Math.max((routeSteps[currentStep]?.distance || 25) * 0.6, 12);
+        const distWalked = haversine(userLat, userLng, ...lastRouteCoords);
+        if (distWalked >= threshold) {
+          currentStep++;
+          lastRouteCoords = [userLat, userLng];
+          setInstruction(routeSteps[currentStep].instruction);
+          document.getElementById('stat-step').textContent = `${currentStep+1}/${routeSteps.length}`;
+        }
+      }
+
+      // Reroute if user drifted far off path (> 50m from last known route point)
+      const drift = haversine(userLat, userLng, ...lastRouteCoords);
+      if (drift > 50 && currentStep < routeSteps.length - 1) {
+        const banner = document.getElementById('reroute-banner');
+        banner.style.display = 'block';
+        const newRoute = await fetchRoute(userLat, userLng, DEST_LAT, DEST_LNG);
+        if (newRoute) {
+          drawRoute(newRoute.geometry);
+          routeSteps  = parseSteps(newRoute);
+          currentStep = 0;
+          lastRouteCoords = [userLat, userLng];
+          document.getElementById('stat-eta').textContent = fmtETA(newRoute.duration);
+          setInstruction(routeSteps[0].instruction);
+        }
+        setTimeout(() => { banner.style.display = 'none'; }, 2500);
+      }
+
+      map.panTo([userLat, userLng]);
+
+    }, err => {
+      setInstruction('GPS signal lost. Move to an open area.');
+    }, { enableHighAccuracy: true, maximumAge: 1500, timeout: 10000 });
+  }
+</script>
 
 </body>
 </html>

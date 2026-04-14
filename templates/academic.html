@@ -1,35 +1,98 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
-<title>Academic Blocks</title>
-<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GuideU | Academic Blocks</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <style>
+    body { padding-top: 70px; }
+    .main { max-width: 900px; margin: 0 auto; padding: 32px 20px 60px; }
+    .page-header { margin-bottom: 28px; }
+    .page-header h1 { font-size: 1.8rem; font-weight: 800; color: var(--text); margin-bottom: 6px; }
+    .page-header p  { color: var(--muted); font-size: 0.9rem; }
+    .block-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 16px; margin-bottom: 32px; }
+    .block-card {
+      background: var(--surface); border: 1.5px solid var(--border);
+      border-radius: 16px; padding: 24px 16px;
+      text-align: center; text-decoration: none; color: var(--text);
+      transition: transform .2s, box-shadow .2s, border-color .2s;
+      display: block;
+    }
+    .block-card:hover { transform: translateY(-4px); box-shadow: 0 12px 28px var(--shadow); border-color: var(--blue); }
+    .block-card .icon { font-size: 2.2rem; margin-bottom: 12px; }
+    .block-card h3 { font-size: 1.1rem; font-weight: 800; color: var(--blue); margin-bottom: 4px; }
+    .block-card p  { font-size: 0.75rem; color: var(--muted); }
+    .block-card .floors-badge {
+      display: inline-block; margin-top: 10px;
+      background: var(--blue-pale); color: var(--blue);
+      border-radius: 20px; padding: 3px 10px;
+      font-size: 0.7rem; font-weight: 600;
+    }
+  </style>
 </head>
-
 <body>
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
+<div class="aurora"><div class="blob blob-1"></div><div class="blob blob-2"></div><div class="blob blob-3"></div></div>
 
-<div class="container">
+<nav class="navbar">
+  <a href="/dashboard" class="navbar-logo">📍 Guide<span>U</span></a>
+  <div class="navbar-right">
+    <a href="/campus" style="color:var(--blue);font-size:0.85rem;font-weight:600;text-decoration:none;">🗺️ Campus Map</a>
+    <a href="/dashboard" class="logout-btn" style="border-color:var(--border);color:var(--muted);">← Dashboard</a>
+  </div>
+</nav>
 
-<h1 class="title">🏫 Academic Blocks</h1>
-<p class="subtitle">Select a block to view on campus map</p>
+<div class="main">
+  <div class="page-header reveal">
+    <h1>🎓 Academic Blocks</h1>
+    <p>Select a block to view floors or navigate directly</p>
+  </div>
 
-<div class="cards">
+  <div class="block-grid">
+    <a href="/floorplan/A Block/0" class="block-card reveal">
+      <div class="icon">🏛️</div>
+      <h3>A Block</h3>
+      <p>Academic Block A</p>
+      <span class="floors-badge">4 Floors</span>
+    </a>
+    <a href="/floorplan/B Block/0" class="block-card reveal">
+      <div class="icon">🏛️</div>
+      <h3>B Block</h3>
+      <p>Academic Block B</p>
+      <span class="floors-badge">4 Floors</span>
+    </a>
+    <a href="/floorplan/M Block/0" class="block-card reveal">
+      <div class="icon">🏛️</div>
+      <h3>M Block</h3>
+      <p>Academic Block M</p>
+      <span class="floors-badge">4 Floors</span>
+    </a>
+    <a href="/floorplan/N Block/0" class="block-card reveal">
+      <div class="icon">🏛️</div>
+      <h3>N Block</h3>
+      <p>Academic Block N</p>
+      <span class="floors-badge">3 Floors</span>
+    </a>
+    <a href="/floorplan/P Block/0" class="block-card reveal">
+      <div class="icon">🏛️</div>
+      <h3>P Block</h3>
+      <p>Academic Block P</p>
+      <span class="floors-badge">3 Floors</span>
+    </a>
+  </div>
 
-<a href="/map/A Block"><button class="card">A Block</button></a>
-<a href="/map/B Block"><button class="card">B Block</button></a>
-<a href="/map/N Block"><button class="card">N Block</button></a>
-<a href="/map/P Block"><button class="card">P Block</button></a>
-<a href="/map/M Block"><button class="card">M Block</button></a>
-
+  <a href="/dashboard" class="btn-secondary reveal">← Back to Dashboard</a>
 </div>
 
-<br>
-
-<a href="/dashboard">
-<button class="map-btn">⬅ Back to Dashboard</button>
-</a>
-
-</div>
-
+<script>
+  const cur=document.getElementById('cursor'),ring=document.getElementById('cursor-ring');
+  let mx=0,my=0,rx=0,ry=0;
+  document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cur.style.left=mx+'px';cur.style.top=my+'px';});
+  (function anim(){rx+=(mx-rx)*.12;ry+=(my-ry)*.12;ring.style.left=rx+'px';ring.style.top=ry+'px';requestAnimationFrame(anim);})();
+  const obs=new IntersectionObserver(e=>e.forEach(x=>{if(x.isIntersecting)x.target.classList.add('visible')}),{threshold:0.1});
+  document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+</script>
 </body>
 </html>

@@ -1,33 +1,429 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GuideU | Dashboard</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <style>
+    body { padding-top: 70px; }
+    .main { max-width: 900px; margin: 0 auto; padding: 32px 20px 60px; }
 
-<title>GuideU</title>
-<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    .search-wrap { position: relative; }
+    .search-dropdown {
+      position: absolute; top: 100%; left: 0; right: 0;
+      background: #fff; border: 1px solid var(--border);
+      border-radius: 12px; box-shadow: 0 8px 24px var(--shadow);
+      z-index: 50; display: none; max-height: 280px; overflow-y: auto;
+    }
+    .search-dropdown.open { display: block; }
+    .search-item {
+      padding: 12px 16px; cursor: pointer;
+      display: flex; align-items: center; gap: 12px;
+      border-bottom: 1px solid var(--border); transition: background .15s;
+    }
+    .search-item:last-child { border-bottom: none; }
+    .search-item:hover { background: var(--blue-pale); }
+    .search-item-icon { color: var(--blue); font-size: 1rem; }
+    .search-item-text strong { display: block; font-size: 0.88rem; font-weight: 600; }
+    .search-item-text span { font-size: 0.75rem; color: var(--muted); }
+    .search-item-nav { margin-left: auto; font-size: 0.75rem; font-weight: 600; color: var(--blue); white-space: nowrap; }
 
+    .recent-row { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 4px; margin-bottom: 24px; }
+    .recent-row::-webkit-scrollbar { display: none; }
+    .recent-pill {
+      padding: 7px 14px; background: #fff;
+      border: 1px solid var(--border); border-radius: 100px;
+      font-size: 0.78rem; font-weight: 600; color: var(--blue);
+      white-space: nowrap; cursor: pointer; text-decoration: none;
+      transition: background .15s, border-color .15s;
+    }
+    .recent-pill:hover { background: var(--blue-pale); border-color: var(--blue); }
+
+    .stats-row { display: flex; gap: 12px; margin-bottom: 24px; flex-wrap: wrap; }
+
+    .section-label {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 0.72rem; font-weight: 700;
+      letter-spacing: 1.5px; text-transform: uppercase;
+      color: var(--blue); margin-bottom: 14px;
+    }
+
+    /* Hero image card */
+    .hero-card {
+      position: relative; border-radius: 20px; overflow: hidden;
+      cursor: pointer; margin-bottom: 0;
+      border: 1.5px solid rgba(37,99,235,0.15);
+      transition: transform .2s, box-shadow .2s;
+      grid-column: span 2;
+    }
+    .hero-card:hover { transform: translateY(-3px); box-shadow: 0 16px 40px rgba(37,99,235,0.2); }
+    .hero-card img {
+      width: 100%; height: 160px; object-fit: cover;
+      display: block; transition: transform .4s;
+    }
+    .hero-card:hover img { transform: scale(1.04); }
+    .hero-card-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(10,20,50,0.85) 0%, rgba(10,20,50,0.2) 60%, transparent 100%);
+      display: flex; flex-direction: column;
+      justify-content: flex-end; padding: 18px 20px;
+    }
+    .hero-card-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: rgba(255,255,255,0.15); backdrop-filter: blur(6px);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 100px; padding: 4px 12px;
+      font-size: 0.65rem; font-weight: 700;
+      letter-spacing: 1px; text-transform: uppercase;
+      color: #93c5fd; margin-bottom: 8px; width: fit-content;
+    }
+    .hero-badge-dot {
+      width: 6px; height: 6px; background: #22d3ee;
+      border-radius: 50%; animation: heroPulse 2s ease-in-out infinite;
+    }
+    @keyframes heroPulse { 0%,100%{opacity:1;transform:scale(1);} 50%{opacity:0.4;transform:scale(0.8);} }
+    .hero-card-title { color: #fff; font-size: 1rem; font-weight: 800; margin-bottom: 3px; font-family: 'Plus Jakarta Sans', sans-serif; }
+    .hero-card-sub { color: rgba(255,255,255,0.65); font-size: 0.72rem; }
+    .hero-play-btn {
+      position: absolute; top: 50%; right: 20px; transform: translateY(-50%);
+      width: 44px; height: 44px; border-radius: 50%;
+      background: rgba(255,255,255,0.2); backdrop-filter: blur(8px);
+      border: 1.5px solid rgba(255,255,255,0.3);
+      display: flex; align-items: center; justify-content: center;
+      color: #fff; font-size: 1rem; transition: background .2s, transform .2s;
+    }
+    .hero-card:hover .hero-play-btn { background: rgba(255,255,255,0.35); transform: translateY(-50%) scale(1.1); }
+
+    /* Open map btn */
+    .open-map-btn {
+      display: flex; align-items: center; justify-content: center; gap: 10px;
+      width: 100%; padding: 16px;
+      background: linear-gradient(135deg, #2563EB, #0ea5e9);
+      border: none; border-radius: 14px; color: #fff;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 1rem; font-weight: 700;
+      cursor: pointer; text-decoration: none;
+      box-shadow: 0 8px 24px rgba(37,99,235,0.35);
+      transition: transform .2s, box-shadow .2s;
+      margin-top: 8px; animation: mapBtnPulse 3s ease-in-out infinite;
+    }
+    @keyframes mapBtnPulse {
+      0%,100% { box-shadow: 0 8px 24px rgba(37,99,235,0.35); }
+      50%      { box-shadow: 0 8px 32px rgba(37,99,235,0.6); }
+    }
+    .open-map-btn:hover { transform: translateY(-3px); box-shadow: 0 16px 40px rgba(37,99,235,0.5); animation: none; }
+    .map-btn-badge {
+      font-size: 0.68rem; background: rgba(255,255,255,0.2);
+      border-radius: 20px; padding: 3px 10px; font-weight: 600;
+    }
+
+    /* Tour modal */
+    .tour-modal-bg {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,0.65); backdrop-filter: blur(4px);
+      z-index: 9999; align-items: center; justify-content: center; padding: 20px;
+    }
+    .tour-modal-bg.open { display: flex; }
+    .tour-modal {
+      background: #0f172a; border: 1px solid rgba(37,99,235,0.3);
+      border-radius: 24px; padding: 28px 24px; max-width: 380px; width: 100%;
+      animation: modalUp .28s cubic-bezier(0.22,1,0.36,1);
+    }
+    @keyframes modalUp { from{transform:translateY(30px);opacity:0;} to{transform:translateY(0);opacity:1;} }
+    .tour-modal-img {
+      width: 100%; height: 160px; object-fit: cover;
+      border-radius: 14px; margin-bottom: 18px;
+      border: 1px solid rgba(37,99,235,0.2);
+    }
+    .tour-modal h3 { color: #60a5fa; font-size: 1.1rem; font-weight: 800; margin-bottom: 8px; font-family: 'Plus Jakarta Sans', sans-serif; }
+    .tour-modal p { color: #94a3b8; font-size: 0.83rem; line-height: 1.7; margin-bottom: 18px; }
+    .tour-modal-actions { display: flex; flex-direction: column; gap: 10px; }
+    .tour-btn-primary {
+      display: block; text-align: center; padding: 13px;
+      background: linear-gradient(135deg, #2563EB, #0ea5e9);
+      color: #fff; border-radius: 12px; text-decoration: none;
+      font-weight: 700; font-size: 0.9rem; font-family: 'Plus Jakarta Sans', sans-serif;
+      transition: transform .15s;
+    }
+    .tour-btn-primary:hover { transform: translateY(-2px); }
+    .tour-btn-secondary {
+      display: block; text-align: center; padding: 12px;
+      background: transparent; border: 1px solid rgba(37,99,235,0.25);
+      color: #64748b; border-radius: 12px;
+      font-size: 0.85rem; font-weight: 600; cursor: pointer;
+      font-family: 'Plus Jakarta Sans', sans-serif; transition: border-color .2s, color .2s;
+    }
+    .tour-btn-secondary:hover { border-color: #2563EB; color: #2563EB; }
+    .tour-ext-btn {
+      display: block; text-align: center; padding: 12px;
+      background: rgba(37,99,235,0.1); border: 1px solid rgba(37,99,235,0.2);
+      color: #60a5fa; border-radius: 12px; text-decoration: none;
+      font-size: 0.85rem; font-weight: 600; transition: background .2s;
+    }
+    .tour-ext-btn:hover { background: rgba(37,99,235,0.2); }
+  </style>
 </head>
-
 <body>
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
 
-<div class="container">
+<nav class="navbar">
+  <a href="/dashboard" class="navbar-logo">📍 Guide<span>U</span></a>
+  <div class="navbar-right">
+    <span style="font-size:0.88rem;color:var(--muted);font-weight:500">{{ user }}</span>
+    {% if avatar %}
+    <img src="{{ avatar }}" style="width:34px;height:34px;border-radius:50%;border:2px solid var(--blue)" alt="avatar">
+    {% else %}
+    <div class="avatar-circle">{{ user[:2].upper() }}</div>
+    {% endif %}
+    <a href="/logout" class="logout-btn">Logout</a>
+  </div>
+</nav>
 
-<h1 class="title">🧭 GuideU</h1>
-<p class="subtitle">Smart Campus Navigation</p>
+<div class="main">
 
-<div class="cards">
+  <!-- Greeting card -->
+  <div class="greeting-card reveal">
+    <div>
+      <h2 id="greeting">Good morning, {{ user }}! 👋</h2>
+      <p>Where are you headed on campus today?</p>
+    </div>
+    <div class="clock" id="clock">--:-- --</div>
+  </div>
 
-<a href="/academic"><button class="card">🏫 Academic Blocks</button></a>
+  <!-- Search -->
+  <div class="card reveal" style="padding:20px;margin-bottom:24px">
+    <div class="search-wrap">
+      <span class="search-icon">🔍</span>
+      <input type="text" class="search-input" id="searchInput"
+             placeholder="Search blocks, hostels, food outlets..."
+             oninput="filterSearch(this.value)"
+             onfocus="if(this.value) showDropdown()"
+             onblur="setTimeout(hideDropdown,200)">
+      <div class="search-dropdown" id="searchDropdown"></div>
+    </div>
+  </div>
 
-<a href="/food"><button class="card">🍕 Food Outlets</button></a>
+  <!-- Stats -->
+  <div class="stats-row reveal">
+    <div class="stat-pill"><span class="stat-num">30+</span><span class="stat-label">Locations</span></div>
+    <div class="stat-pill"><span class="stat-num">5</span><span class="stat-label">Blocks</span></div>
+    <div class="stat-pill"><span class="stat-num">12+</span><span class="stat-label">Hostels</span></div>
+    <div class="stat-pill"><span class="stat-num">Live</span><span class="stat-label">GPS</span></div>
+  </div>
 
-<a href="/hostels"><button class="card">🏠 Hostels</button></a>
+  <!-- Categories -->
+  <div class="section-label reveal">Explore Campus</div>
+  <div class="cat-grid reveal">
+    <a href="/academic" class="cat-card cat-blue">
+      <div class="cat-icon">🎓</div>
+      <h3>Academic Blocks</h3>
+      <p>A · B · M · N · P Block</p>
+    </a>
+    <a href="/food" class="cat-card cat-amber">
+      <div class="cat-icon">🍽️</div>
+      <h3>Food & Dining</h3>
+      <p>8 outlets on campus</p>
+    </a>
+    <a href="/hostels" class="cat-card cat-sky">
+      <div class="cat-icon">🏠</div>
+      <h3>Hostels</h3>
+      <p>C1–C12 · D1–D6</p>
+    </a>
+    <a href="/campus" class="cat-card cat-green">
+      <div class="cat-icon">🗺️</div>
+      <h3>Campus Map</h3>
+      <p>Full interactive map</p>
+    </a>
+    <a href="/health" class="cat-card" style="background:linear-gradient(135deg,#10b981,#059669);">
+      <div class="cat-icon">💊</div>
+      <h3>Health & Pharmacy</h3>
+      <p>Medicines · Wellness</p>
+    </a>
 
-<a href="/map/Main Campus"><button class="card">🗺 Campus Map</button></a>
+    <!-- Campus Hero Image Card -->
+    <a href="https://www.bennett.edu.in/campus-tour/" target="_blank" rel="noopener noreferrer" class="hero-card reveal" style="display:block;text-decoration:none;">
+      <img src="{{ url_for('static', filename='campus_hero.png') }}"
+           alt="Bennett University Campus"
+           onerror="this.parentElement.style.display='none'">
+      <div class="hero-card-overlay">
+        <div class="hero-card-badge">
+          <span class="hero-badge-dot"></span>
+          360° Virtual Tour
+        </div>
+        <div class="hero-card-title">🎥 Bennett University Campus</div>
+        <div class="hero-card-sub">Tap to explore the virtual tour</div>
+      </div>
+      <div class="hero-play-btn">▶</div>
+    </div>
+  </a>
+
+  <!-- Recent -->
+  <div class="section-label reveal" style="margin-top:28px;">🕐 Recent Visits</div>
+  <div class="recent-row reveal" id="recentRow">
+    <span style="font-size:0.78rem;color:var(--muted)">No recent visits yet — start navigating!</span>
+  </div>
+
+  
+  <!-- Quick Nav Shortcuts -->
+  <div class="section-label reveal" style="margin-top:8px;">⚡ Quick Navigate</div>
+  <div class="quick-nav-grid reveal">
+    <a href="/navigate/Gobble" class="qnav-btn">🍽️ Gobble Mess</a>
+    <a href="/navigate/Dominos" class="qnav-btn">🍕 Dominos</a>
+    <a href="/navigate/Subway" class="qnav-btn">🥪 Subway</a>
+    <a href="/navigate/A Block" class="qnav-btn">🎓 A Block</a>
+    <a href="/navigate/B Block" class="qnav-btn">🎓 B Block</a>
+    <a href="/navigate/Pharmacy" class="qnav-btn">💊 Pharmacy</a>
+  </div>
 
 </div>
 
-</div>
+<!-- Tour Modal -->
+ // Show toast if user came back after tour failed
+if(sessionStorage.getItem('tourClicked')){
+  sessionStorage.removeItem('tourClicked');
+  const t=document.createElement('div');
+  t.innerHTML='🔄 Tour site may be down — try again later';
+  t.style.cssText='position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1e293b;color:#94a3b8;padding:10px 20px;border-radius:20px;font-size:0.8rem;z-index:9999;border:1px solid rgba(37,99,235,0.3);';
+  document.body.appendChild(t);
+  setTimeout(()=>t.remove(),4000);
+}
 
+<script>
+  // Cursor
+  const cur=document.getElementById('cursor'),ring=document.getElementById('cursor-ring');
+  let mx=0,my=0,rx=0,ry=0;
+  document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cur.style.left=mx+'px';cur.style.top=my+'px';});
+  (function anim(){rx+=(mx-rx)*.12;ry+=(my-ry)*.12;ring.style.left=rx+'px';ring.style.top=ry+'px';requestAnimationFrame(anim);})();
+
+  // Tour modal
+ function closeTourModal(){ document.getElementById('tourModal').classList.remove('open'); }
+
+  async function checkAndOpenTour() {
+    window.open('https://bennett.edu.in/campus-tour/', '_blank');
+    setTimeout(() => {
+      document.getElementById('tourModal').classList.add('open');
+    }, 2000);
+  }
+  // Greeting + clock
+  function updateTime(){
+    const now=new Date(),h=now.getHours();
+    const g=h<12?'Good morning':h<17?'Good afternoon':'Good evening';
+    const em=h<12?'🌤️':h<17?'☀️':'🌙';
+    document.getElementById('greeting').textContent=g+', {{ user }}! '+em;
+    const hh=String(now.getHours()%12||12).padStart(2,'0');
+    const mm=String(now.getMinutes()).padStart(2,'0');
+    document.getElementById('clock').textContent=hh+':'+mm+' '+(now.getHours()>=12?'PM':'AM');
+  }
+  updateTime(); setInterval(updateTime,1000);
+
+  // Recent visits
+  function getRecent(){
+    try{ return JSON.parse(localStorage.getItem('guideu_recent')||'[]'); }
+    catch{ return []; }
+  }
+  function addRecent(name,url){
+    let r=getRecent().filter(x=>x.name!==name);
+    r.unshift({name,url});
+    if(r.length>8)r=r.slice(0,8);
+    localStorage.setItem('guideu_recent',JSON.stringify(r));
+  }
+  function renderRecent(){
+    const r=getRecent();
+    const row=document.getElementById('recentRow');
+    if(!row)return;
+    if(r.length===0){
+      row.innerHTML='<span style="font-size:0.78rem;color:var(--muted)">No recent visits yet — start navigating!</span>';
+      return;
+    }
+    row.innerHTML=r.map(x=>`
+      <a href="${x.url}" class="recent-pill" onclick="addRecent('${x.name}','${x.url}')">
+        📍 ${x.name}
+      </a>`).join('');
+  }
+  renderRecent();
+
+  // Search locations
+  const LOCATIONS=[
+    {name:'A Block',         desc:'Academic Block A',        icon:'📍', url:'/navigate/A Block'},
+    {name:'B Block',         desc:'Academic Block B',        icon:'📍', url:'/navigate/B Block'},
+    {name:'M Block',         desc:'Academic Block M',        icon:'📍', url:'/navigate/M Block'},
+    {name:'N Block',         desc:'Academic Block N',        icon:'📍', url:'/navigate/N Block'},
+    {name:'P Block',         desc:'Academic Block P',        icon:'📍', url:'/navigate/P Block'},
+    {name:'Gobble Mess',     desc:'Main Mess Hall',          icon:'🍽️', url:'/navigate/Gobble'},
+    {name:'Dominos',         desc:"Domino's Pizza",          icon:'🍕', url:'/navigate/Dominos'},
+    {name:'Subway',          desc:'Subway Sandwiches',       icon:'🥪', url:'/navigate/Subway'},
+    {name:'Southern Stories',desc:'South Indian Food',       icon:'🍛', url:'/navigate/Southern Stories'},
+    {name:'Hotspot',         desc:'Cafe & Snacks',           icon:'☕', url:'/navigate/Hotspot'},
+    {name:'Infinity Cafe',   desc:'Infinity Cafe',           icon:'☕', url:'/navigate/Infinity'},
+    {name:'Paid Mess',       desc:'Paid Mess Hall',          icon:'🍽️', url:'/navigate/Paid Mess'},
+    {name:'C1 Hostel',  desc:'Boys Hostel C1',  icon:'🏠', url:'/navigate/C1'},
+    {name:'C2 Hostel',  desc:'Boys Hostel C2',  icon:'🏠', url:'/navigate/C2'},
+    {name:'C3 Hostel',  desc:'Boys Hostel C3',  icon:'🏠', url:'/navigate/C3'},
+    {name:'C4 Hostel',  desc:'Boys Hostel C4',  icon:'🏠', url:'/navigate/C4'},
+    {name:'C5 Hostel',  desc:'Boys Hostel C5',  icon:'🏠', url:'/navigate/C5'},
+    {name:'C6 Hostel',  desc:'Boys Hostel C6',  icon:'🏠', url:'/navigate/C6'},
+    {name:'C7 Hostel',  desc:'Boys Hostel C7',  icon:'🏠', url:'/navigate/C7'},
+    {name:'C8 Hostel',  desc:'Boys Hostel C8',  icon:'🏠', url:'/navigate/C8'},
+    {name:'C9 Hostel',  desc:'Boys Hostel C9',  icon:'🏠', url:'/navigate/C9'},
+    {name:'C10 Hostel', desc:'Boys Hostel C10', icon:'🏠', url:'/navigate/C10'},
+    {name:'C11 Hostel', desc:'Boys Hostel C11', icon:'🏠', url:'/navigate/C11'},
+    {name:'C12 Hostel', desc:'Boys Hostel C12', icon:'🏠', url:'/navigate/C12'},
+    {name:'D1 Hostel',  desc:'Girls Hostel D1', icon:'🏡', url:'/navigate/D1'},
+    {name:'D2 Hostel',  desc:'Girls Hostel D2', icon:'🏡', url:'/navigate/D2'},
+    {name:'D3 Hostel',  desc:'Girls Hostel D3', icon:'🏡', url:'/navigate/D3'},
+    {name:'D4 Hostel',  desc:'Girls Hostel D4', icon:'🏡', url:'/navigate/D4'},
+    {name:'D5 Hostel',  desc:'Girls Hostel D5', icon:'🏡', url:'/navigate/D5'},
+    {name:'D6 Hostel',  desc:'Girls Hostel D6', icon:'🏡', url:'/navigate/D6'},
+    {name:'Pharmacy',   desc:'Pharmacy & Wellness', icon:'💊', url:'/navigate/Pharmacy'},
+  ];
+
+  function goNavigate(name,url){
+    addRecent(name,url);
+    window.location.href=url;
+  }
+
+  function filterSearch(q){
+    const dd=document.getElementById('searchDropdown');
+    if(!q.trim()){dd.classList.remove('open');return;}
+    const res=LOCATIONS.filter(l=>
+      l.name.toLowerCase().includes(q.toLowerCase())||
+      l.desc.toLowerCase().includes(q.toLowerCase())
+    );
+    if(!res.length){dd.classList.remove('open');return;}
+    dd.innerHTML=res.slice(0,7).map(l=>`
+      <div class="search-item" onclick="goNavigate('${l.name}','${l.url}')">
+        <span class="search-item-icon">${l.icon}</span>
+        <div class="search-item-text">
+          <strong>${l.name}</strong>
+          <span>${l.desc}</span>
+        </div>
+        <span class="search-item-nav">Navigate →</span>
+      </div>`).join('');
+    dd.classList.add('open');
+  }
+
+  function showDropdown(){
+    if(document.getElementById('searchInput').value)
+      document.getElementById('searchDropdown').classList.add('open');
+  }
+  function hideDropdown(){
+    setTimeout(()=>document.getElementById('searchDropdown').classList.remove('open'),200);
+  }
+
+  document.querySelectorAll('.cat-card, .recent-pill').forEach(el=>{
+    el.addEventListener('click',function(){
+      const name=this.textContent.trim().replace(/[📍🍽️🏠🍕🥪]/g,'').trim();
+      const url=this.getAttribute('href');
+      if(url&&url.includes('/navigate/'))addRecent(name,url);
+    });
+  });
+
+  const obs=new IntersectionObserver(entries=>entries.forEach(e=>{
+    if(e.isIntersecting)e.target.classList.add('visible');
+  }),{threshold:0.1});
+  document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+</script>
 </body>
 </html>

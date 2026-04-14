@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GuideU | Welcome</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      height: 100vh;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      position: relative;
+    }
+    .bg {
+      position: absolute;
+      inset: 0;
+      background: url("{{ url_for('static', filename='campus_hero.png') }}") no-repeat center center / cover;
+      transform: scale(1.05);
+      animation: slowZoom 20s ease-in-out infinite alternate;
+    }
+    @keyframes slowZoom {
+      from { transform: scale(1.05); }
+      to   { transform: scale(1.12); }
+    }
+    .overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        to bottom,
+        rgba(10, 20, 50, 0.55) 0%,
+        rgba(10, 20, 50, 0.70) 60%,
+        rgba(10, 20, 50, 0.85) 100%
+      );
+    }
+    .content {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+      padding: 0 24px;
+      animation: fadeUp 1s ease both;
+    }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255,255,255,0.12);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 100px;
+      padding: 8px 18px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: #93c5fd;
+      margin-bottom: 24px;
+      backdrop-filter: blur(8px);
+    }
+    .badge-dot {
+      width: 7px; height: 7px;
+      background: #22d3ee;
+      border-radius: 50%;
+      animation: pulse 2s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%,100% { opacity:1; transform:scale(1); }
+      50%      { opacity:0.4; transform:scale(0.8); }
+    }
+    .logo {
+      font-size: clamp(1rem, 3vw, 1.2rem);
+      font-weight: 700;
+      color: rgba(255,255,255,0.6);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+    .logo span { color: #60a5fa; }
+    h1 {
+      font-size: clamp(2.2rem, 7vw, 4.2rem);
+      font-weight: 800;
+      color: #ffffff;
+      line-height: 1.1;
+      letter-spacing: -1px;
+      margin-bottom: 18px;
+    }
+    h1 span {
+      background: linear-gradient(90deg, #60a5fa, #22d3ee);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    p {
+      font-size: clamp(0.95rem, 2.5vw, 1.15rem);
+      color: rgba(255,255,255,0.65);
+      font-family: 'Inter', sans-serif;
+      font-weight: 400;
+      line-height: 1.7;
+      max-width: 480px;
+      margin: 0 auto 40px;
+    }
+    .btn-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      padding: 17px 40px;
+      background: linear-gradient(135deg, #2563EB, #0ea5e9);
+      color: #fff;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      border-radius: 100px;
+      border: none;
+      cursor: pointer;
+      text-decoration: none;
+      transition: transform 0.2s, box-shadow 0.2s;
+      animation: ctaPulse 3s ease-in-out infinite;
+    }
+    @keyframes ctaPulse {
+      0%,100% { box-shadow: 0 0 0 0 rgba(37,99,235,0.5); }
+      50%      { box-shadow: 0 0 0 18px rgba(37,99,235,0); }
+    }
+    .btn:hover {
+      transform: translateY(-3px) scale(1.02);
+      box-shadow: 0 20px 40px rgba(37,99,235,0.45);
+      animation: none;
+    }
+    .btn-icon {
+      width: 26px; height: 26px;
+      background: rgba(255,255,255,0.2);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px;
+    }
+    .hint {
+      font-size: 0.72rem !important;
+      color: rgba(255,255,255,0.3) !important;
+      margin: 0 !important;
+    }
+    .stats {
+      display: flex;
+      justify-content: center;
+      gap: 36px;
+      margin-bottom: 44px;
+      flex-wrap: wrap;
+    }
+    .stat { text-align: center; }
+    .stat-num {
+      display: block;
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: #fff;
+    }
+    .stat-label {
+      display: block;
+      font-size: 0.68rem;
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.35);
+      margin-top: 3px;
+      font-family: 'Inter', sans-serif;
+    }
+    .scroll-indicator {
+      position: absolute;
+      bottom: 28px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      color: rgba(255,255,255,0.25);
+      font-size: 0.62rem;
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      z-index: 2;
+    }
+    .scroll-line {
+      width: 1px; height: 32px;
+      background: linear-gradient(to bottom, rgba(255,255,255,0.4), transparent);
+      animation: scrollDrop 2s ease-in-out infinite;
+    }
+    @keyframes scrollDrop {
+      0%   { transform: scaleY(0); transform-origin: top; }
+      50%  { transform: scaleY(1); transform-origin: top; }
+      51%  { transform: scaleY(1); transform-origin: bottom; }
+      100% { transform: scaleY(0); transform-origin: bottom; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="bg"></div>
+<div class="overlay"></div>
+
+<div class="content">
+  <div class="badge">
+    <span class="badge-dot"></span>
+    Smart Campus Navigation
+  </div>
+
+  <div class="logo">📍 Guide<span>U</span></div>
+
+  <h1>Welcome to<br><span>Bennett University</span></h1>
+
+  <p>Navigate every corner of campus — academic blocks, hostels, food outlets, and more — all in one place.</p>
+
+  <div class="stats">
+    <div class="stat"><span class="stat-num">30+</span><span class="stat-label">Locations</span></div>
+    <div class="stat"><span class="stat-num">Live</span><span class="stat-label">GPS</span></div>
+    <div class="stat"><span class="stat-num">360°</span><span class="stat-label">Tour</span></div>
+    <div class="stat"><span class="stat-num">Free</span><span class="stat-label">Access</span></div>
+  </div>
+
+  <div class="btn-wrap">
+    <a href="/login" class="btn">
+      <span class="btn-icon">▶</span>
+      Get Started
+    </a>
+    <span class="hint">Sign in to start navigating campus</span>
+  </div>
+</div>
+
+<div class="scroll-indicator">
+  <div class="scroll-line"></div>
+  Explore
+</div>
+
+</body>
+</html>

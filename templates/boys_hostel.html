@@ -1,42 +1,68 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
-<title>Boys Hostels</title>
-<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GuideU | Boys Hostels</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <style>
+    body { padding-top: 70px; }
+    .main { max-width: 900px; margin: 0 auto; padding: 32px 20px 60px; }
+    .page-header { margin-bottom: 28px; }
+    .page-header h1 { font-size: 1.8rem; font-weight: 800; margin-bottom: 6px; }
+    .page-header p  { color: var(--muted); font-size: 0.9rem; }
+    .hostel-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 12px; margin-bottom: 32px; }
+    .hostel-card {
+      background: var(--surface); border: 1.5px solid var(--border);
+      border-radius: 14px; padding: 20px 12px;
+      text-align: center; text-decoration: none; color: var(--text);
+      transition: transform .2s, box-shadow .2s, border-color .2s;
+    }
+    .hostel-card:hover { transform: translateY(-3px); box-shadow: 0 8px 20px var(--shadow); border-color: #0EA5E9; }
+    .hostel-card .icon { font-size: 1.8rem; margin-bottom: 8px; }
+    .hostel-card h3 { font-size: 1rem; font-weight: 800; color: #0EA5E9; margin-bottom: 2px; }
+    .hostel-card p  { font-size: 0.7rem; color: var(--muted); }
+  </style>
 </head>
-
 <body>
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
+<div class="aurora"><div class="blob blob-1"></div><div class="blob blob-2"></div><div class="blob blob-3"></div></div>
 
-<div class="container">
+<nav class="navbar">
+  <a href="/dashboard" class="navbar-logo">📍 Guide<span>U</span></a>
+  <div class="navbar-right">
+    <a href="/campus" style="color:var(--blue);font-size:0.85rem;font-weight:600;text-decoration:none;">🗺️ Campus Map</a>
+    <a href="/hostels" class="logout-btn" style="border-color:var(--border);color:var(--muted);">← Hostels</a>
+  </div>
+</nav>
 
-<h1 class="title">🏠 Boys Hostels</h1>
+<div class="main">
+  <div class="page-header reveal">
+    <h1>🏠 Boys Hostels</h1>
+    <p>Select a hostel to navigate — C1 through C12</p>
+  </div>
 
-<div class="cards">
+  <div class="hostel-grid">
+    {% for i in range(1, 13) %}
+    <a href="/navigate/C{{ i }}" class="hostel-card reveal">
+      <div class="icon">🏠</div>
+      <h3>C{{ i }}</h3>
+      <p>Boys Hostel</p>
+    </a>
+    {% endfor %}
+  </div>
 
-<a href="/map/C1"><button class="card">C1</button></a>
-<a href="/map/C2"><button class="card">C2</button></a>
-<a href="/map/C3"><button class="card">C3</button></a>
-<a href="/map/C4"><button class="card">C4</button></a>
-<a href="/map/C5"><button class="card">C5</button></a>
-<a href="/map/C6"><button class="card">C6</button></a>
-<a href="/map/C7"><button class="card">C7</button></a>
-<a href="/map/C8"><button class="card">C8</button></a>
-<a href="/map/C9"><button class="card">C9</button></a>
-<a href="/map/C10"><button class="card">C10</button></a>
-<a href="/map/C11"><button class="card">C11</button></a>
-<a href="/map/C12"><button class="card">C12</button></a>
-
+  <a href="/hostels" class="btn-secondary reveal">← Back to Hostels</a>
 </div>
 
-<br>
-
-<a href="/hostels">
-<button class="map-btn">⬅ Back</button>
-</a>
-
-</div>
-
+<script>
+  const cur=document.getElementById('cursor'),ring=document.getElementById('cursor-ring');
+  let mx=0,my=0,rx=0,ry=0;
+  document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cur.style.left=mx+'px';cur.style.top=my+'px';});
+  (function anim(){rx+=(mx-rx)*.12;ry+=(my-ry)*.12;ring.style.left=rx+'px';ring.style.top=ry+'px';requestAnimationFrame(anim);})();
+  const obs=new IntersectionObserver(e=>e.forEach(x=>{if(x.isIntersecting)x.target.classList.add('visible')}),{threshold:0.1});
+  document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+</script>
 </body>
-
 </html>

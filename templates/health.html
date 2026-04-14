@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GuideU | Health & Wellness</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <style>
+    body { background: #F8FAFC; font-family: 'Inter', sans-serif; color: #0F172A; }
+    .hw-wrap { max-width: 600px; margin: 0 auto; padding: 32px 20px 60px; }
+    .hw-header { margin-bottom: 24px; }
+    .hw-header h1 { font-size: 1.6rem; font-weight: 800; font-family: 'Plus Jakarta Sans', sans-serif; color: #0F172A; margin: 0 0 4px; }
+    .hw-header p  { font-size: 0.85rem; color: #64748B; margin: 0; }
+
+    .open-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: #DCFCE7; color: #16A34A;
+      font-size: 0.75rem; font-weight: 600;
+      padding: 4px 12px; border-radius: 20px; margin-bottom: 20px;
+    }
+    .open-dot { width: 7px; height: 7px; border-radius: 50%; background: #16A34A; }
+
+    .hw-card {
+      background: #fff; border: 1px solid rgba(0,0,0,0.07);
+      border-radius: 16px; padding: 16px 18px; margin-bottom: 12px;
+      display: flex; gap: 14px; align-items: flex-start;
+    }
+    .hw-icon {
+      width: 42px; height: 42px; border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.2rem; flex-shrink: 0;
+    }
+    .hw-icon.green  { background: #DCFCE7; }
+    .hw-icon.purple { background: #EDE9FE; }
+    .hw-icon.amber  { background: #FEF3C7; }
+    .hw-card-title { font-size: 0.88rem; font-weight: 700; margin: 0 0 4px; }
+    .hw-card-title.green  { color: #16A34A; }
+    .hw-card-title.purple { color: #7C3AED; }
+    .hw-card-title.amber  { color: #D97706; }
+    .hw-card-body { font-size: 0.8rem; color: #475569; line-height: 1.65; margin: 0; }
+
+    .hours-table { width: 100%; margin-top: 6px; border-collapse: collapse; }
+    .hours-table td { font-size: 0.8rem; padding: 4px 0; }
+    .hours-table td:first-child { color: #64748B; }
+    .hours-table td:last-child  { text-align: right; font-weight: 600; color: #7C3AED; }
+
+    .nav-card {
+      display: flex; align-items: center; gap: 14px;
+      background: #fff; border: 1.5px solid rgba(16,185,129,0.3);
+      border-radius: 16px; padding: 16px 18px;
+      text-decoration: none; transition: background 0.15s, transform 0.1s;
+      margin-bottom: 12px;
+    }
+    .nav-card:hover { background: #F0FDF4; transform: translateY(-1px); }
+    .nav-card-icon {
+      width: 46px; height: 46px; border-radius: 12px;
+      background: #DCFCE7; display: flex; align-items: center;
+      justify-content: center; font-size: 1.4rem; flex-shrink: 0;
+    }
+    .nav-card-name { font-size: 0.9rem; font-weight: 700; color: #0F172A; margin: 0 0 2px; }
+    .nav-card-sub  { font-size: 0.75rem; color: #64748B; margin: 0; }
+    .nav-arrow { margin-left: auto; font-size: 0.82rem; font-weight: 700; color: #10B981; white-space: nowrap; }
+
+    .back-btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 0.82rem; color: #64748B;
+      background: #F1F5F9; border: 1px solid #E2E8F0;
+      border-radius: 10px; padding: 9px 16px;
+      text-decoration: none; transition: background 0.15s; margin-top: 4px;
+    }
+    .back-btn:hover { background: #E2E8F0; }
+  </style>
+</head>
+<body>
+<div class="hw-wrap">
+
+  <div class="hw-header">
+    <h1>💊 Health & Wellness</h1>
+    <p>Campus medical services — located near C1 Hostel</p>
+  </div>
+
+  <div class="open-badge"><div class="open-dot"></div> Open now</div>
+
+  <div class="hw-card">
+    <div class="hw-icon green">🏥</div>
+    <div>
+      <p class="hw-card-title green">Pharmacy & Wellness Center</p>
+      <p class="hw-card-body">Full-service pharmacy with OTC medicines, prescription services, and basic wellness consultations. Located just below C1 Boys Hostel.</p>
+    </div>
+  </div>
+
+  <div class="hw-card">
+    <div class="hw-icon purple">🕐</div>
+    <div style="flex:1">
+      <p class="hw-card-title purple">Opening hours</p>
+      <table class="hours-table">
+        <tr><td>Mon – Fri</td><td>9:00 AM – 7:00 PM</td></tr>
+        <tr><td>Saturday</td><td>9:00 AM – 4:00 PM</td></tr>
+        <tr><td>Sunday</td><td>10:00 AM – 2:00 PM</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="hw-card">
+    <div class="hw-icon amber">📞</div>
+    <div>
+      <p class="hw-card-title amber">Emergency</p>
+      <p class="hw-card-body">For medical emergencies on campus, contact the security desk or dial the campus helpline immediately.</p>
+    </div>
+  </div>
+
+  <a href="/navigate/Pharmacy" class="nav-card">
+    <div class="nav-card-icon">💊</div>
+    <div>
+      <p class="nav-card-name">Pharmacy & Wellness Center</p>
+      <p class="nav-card-sub">Near C1 Hostel· Get directions</p>
+    </div>
+    <span class="nav-arrow">Navigate →</span>
+  </a>
+
+  <a href="/dashboard" class="back-btn">← Back to Dashboard</a>
+
+</div>
+</body>
+</html>

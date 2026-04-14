@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GuideU | Privacy Policy</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <style>
+    body { padding-top: 70px; }
+    .main { max-width: 760px; margin: 0 auto; padding: 40px 20px 80px; }
+
+    .privacy-hero {
+      background: linear-gradient(135deg, #1e3a8a, #2563EB, #0ea5e9);
+      border-radius: 24px; padding: 40px 32px;
+      color: #fff; margin-bottom: 36px; position: relative; overflow: hidden;
+    }
+    .privacy-hero::before {
+      content: ''; position: absolute; inset: 0;
+      background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    }
+    .privacy-hero-content { position: relative; z-index: 1; }
+    .privacy-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: rgba(255,255,255,0.15); backdrop-filter: blur(8px);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 100px; padding: 5px 14px;
+      font-size: 0.7rem; font-weight: 700;
+      letter-spacing: 1px; text-transform: uppercase;
+      color: #bfdbfe; margin-bottom: 16px;
+    }
+    .privacy-hero h1 {
+      font-size: 2rem; font-weight: 800;
+      color: #fff; margin-bottom: 8px;
+    }
+    .privacy-hero p {
+      color: rgba(255,255,255,0.75); font-size: 0.9rem; line-height: 1.6;
+    }
+    .privacy-hero-icon {
+      position: absolute; right: 32px; top: 50%; transform: translateY(-50%);
+      font-size: 5rem; opacity: 0.15;
+    }
+    .last-updated {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 8px; padding: 4px 12px;
+      font-size: 0.72rem; color: rgba(255,255,255,0.6);
+      margin-top: 14px;
+    }
+
+    .toc-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 16px; padding: 20px 24px; margin-bottom: 28px;
+    }
+    .toc-title {
+      font-size: 0.7rem; font-weight: 700; letter-spacing: 1.5px;
+      text-transform: uppercase; color: var(--blue); margin-bottom: 14px;
+    }
+    .toc-list { display: flex; flex-direction: column; gap: 6px; }
+    .toc-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 8px 12px; border-radius: 8px;
+      text-decoration: none; color: var(--text);
+      font-size: 0.85rem; font-weight: 500;
+      transition: background .15s, color .15s;
+    }
+    .toc-item:hover { background: var(--blue-pale); color: var(--blue); }
+    .toc-num {
+      width: 22px; height: 22px; border-radius: 6px;
+      background: var(--blue-pale); color: var(--blue);
+      font-size: 0.68rem; font-weight: 800;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .section-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 20px; padding: 28px; margin-bottom: 16px;
+      transition: box-shadow .2s;
+    }
+    .section-card:hover { box-shadow: 0 8px 28px var(--shadow); }
+    .section-header {
+      display: flex; align-items: center; gap: 14px; margin-bottom: 16px;
+    }
+    .section-icon {
+      width: 44px; height: 44px; border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.2rem; flex-shrink: 0;
+    }
+    .section-num {
+      font-size: 0.65rem; font-weight: 800; letter-spacing: 1px;
+      text-transform: uppercase; color: var(--blue); margin-bottom: 2px;
+    }
+    .section-card h2 {
+      font-size: 1.05rem; font-weight: 800; color: var(--text);
+    }
+    .section-card p {
+      font-size: 0.88rem; color: #475569; line-height: 1.8;
+    }
+    .section-card ul {
+      margin: 12px 0 0 4px; display: flex; flex-direction: column; gap: 8px;
+    }
+    .section-card ul li {
+      display: flex; align-items: flex-start; gap: 10px;
+      font-size: 0.88rem; color: #475569; line-height: 1.7; list-style: none;
+    }
+    .section-card ul li::before {
+      content: '✓'; color: var(--blue); font-weight: 800;
+      font-size: 0.8rem; margin-top: 2px; flex-shrink: 0;
+    }
+
+    .highlight-box {
+      background: var(--blue-pale); border-left: 4px solid var(--blue);
+      border-radius: 0 10px 10px 0; padding: 12px 16px; margin-top: 12px;
+      font-size: 0.82rem; color: #1e40af; font-weight: 500; line-height: 1.6;
+    }
+
+    .contact-card {
+      background: linear-gradient(135deg, #f0fdf4, #dcfce7);
+      border: 1px solid rgba(34,197,94,0.25);
+      border-radius: 20px; padding: 28px; margin-bottom: 28px;
+      display: flex; gap: 20px; align-items: flex-start;
+    }
+    .contact-icon {
+      width: 52px; height: 52px; background: #22c55e;
+      border-radius: 14px; display: flex; align-items: center;
+      justify-content: center; font-size: 1.4rem; flex-shrink: 0;
+    }
+    .contact-card h3 { font-size: 1rem; font-weight: 800; color: #15803d; margin-bottom: 4px; }
+    .contact-card p  { font-size: 0.85rem; color: #166534; line-height: 1.7; }
+
+    .back-btn {
+      display: flex; align-items: center; justify-content: center; gap: 10px;
+      width: 100%; padding: 15px;
+      background: linear-gradient(135deg, #2563EB, #1D4ED8);
+      color: #fff; border: none; border-radius: 14px;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 1rem; font-weight: 700;
+      text-decoration: none;
+      box-shadow: 0 8px 24px rgba(37,99,235,0.35);
+      transition: transform .2s, box-shadow .2s;
+    }
+    .back-btn:hover { transform: translateY(-2px); box-shadow: 0 12px 32px rgba(37,99,235,0.45); }
+  </style>
+</head>
+<body>
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
+<div class="aurora">
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  <div class="blob blob-3"></div>
+</div>
+
+<nav class="navbar">
+  <a href="/" class="navbar-logo">📍 Guide<span>U</span></a>
+  <div class="navbar-right">
+    <a href="/" class="logout-btn" style="border-color:var(--border);color:var(--muted);">← Home</a>
+  </div>
+</nav>
+
+<div class="main">
+
+  <!-- Hero -->
+  <div class="privacy-hero reveal">
+    <div class="privacy-hero-content">
+      <div class="privacy-badge">🔐 Legal Document</div>
+      <h1>Privacy Policy</h1>
+      <p>How GuideU collects, uses, and protects your personal information when you use our campus navigation platform.</p>
+      <div class="last-updated">📅 Last updated: April 2025</div>
+    </div>
+    <div class="privacy-hero-icon">🔒</div>
+  </div>
+
+  <!-- Table of Contents -->
+  <div class="toc-card reveal">
+    <div class="toc-title">📋 Table of Contents</div>
+    <div class="toc-list">
+      <a href="#section1" class="toc-item"><span class="toc-num">1</span> Information We Collect</a>
+      <a href="#section2" class="toc-item"><span class="toc-num">2</span> How We Use Information</a>
+      <a href="#section3" class="toc-item"><span class="toc-num">3</span> Third-Party Sharing</a>
+      <a href="#section4" class="toc-item"><span class="toc-num">4</span> Data Retention & Security</a>
+      <a href="#section5" class="toc-item"><span class="toc-num">5</span> Your Rights</a>
+      <a href="#section6" class="toc-item"><span class="toc-num">6</span> Changes to This Policy</a>
+    </div>
+  </div>
+
+  <!-- Section 1 -->
+  <div class="section-card reveal" id="section1">
+    <div class="section-header">
+      <div class="section-icon" style="background:#DBEAFE;">📡</div>
+      <div>
+        <div class="section-num">Section 01</div>
+        <h2>Information We Collect</h2>
+      </div>
+    </div>
+    <p>GuideU relies on location services to help you navigate the campus efficiently. We may collect the following types of information:</p>
+    <ul>
+      <li>Your real-time GPS location while using navigation features</li>
+      <li>Device type, browser, and operating system information</li>
+      <li>Login credentials (username, hashed password, or Google OAuth token)</li>
+      <li>Recent navigation history stored locally on your device</li>
+      <li>Profile information from Google Sign-In (name, email, profile picture)</li>
+    </ul>
+    <div class="highlight-box">
+      📍 Location data is only accessed when you actively use navigation — we never track you in the background.
+    </div>
+  </div>
+
+  <!-- Section 2 -->
+  <div class="section-card reveal" id="section2">
+    <div class="section-header">
+      <div class="section-icon" style="background:#DCFCE7;">⚙️</div>
+      <div>
+        <div class="section-num">Section 02</div>
+        <h2>How We Use Information</h2>
+      </div>
+    </div>
+    <p>All collected information is solely used to enhance the GuideU experience on the Bennett University campus:</p>
+    <ul>
+      <li>Providing accurate point-to-point GPS navigation across campus</li>
+      <li>Suggesting nearby food outlets, academic blocks, and hostels</li>
+      <li>Maintaining secure account access and saving your preferences</li>
+      <li>Displaying your recent visit history for faster navigation</li>
+      <li>Personalizing greetings and time-based features</li>
+    </ul>
+  </div>
+
+  <!-- Section 3 -->
+  <div class="section-card reveal" id="section3">
+    <div class="section-header">
+      <div class="section-icon" style="background:#FEF3C7;">🤝</div>
+      <div>
+        <div class="section-num">Section 03</div>
+        <h2>Third-Party Sharing</h2>
+      </div>
+    </div>
+    <p>We believe in maintaining your privacy. GuideU does <strong>not</strong> sell, trade, or transfer your personally identifiable information to outside parties without your explicit consent.</p>
+    <ul>
+      <li>Google OAuth is used only for authentication — we don't share data back</li>
+      <li>OpenStreetMap & OSRM are used for mapping — no personal data is sent</li>
+      <li>University administration may access data only if required by policy</li>
+      <li>Law enforcement requests are handled strictly per applicable law</li>
+    </ul>
+    <div class="highlight-box">
+      🛡️ We use Google Sign-In for convenience only. Your Google data is never stored beyond your name, email, and profile picture.
+    </div>
+  </div>
+
+  <!-- Section 4 -->
+  <div class="section-card reveal" id="section4">
+    <div class="section-header">
+      <div class="section-icon" style="background:#F5F3FF;">🔐</div>
+      <div>
+        <div class="section-num">Section 04</div>
+        <h2>Data Retention & Security</h2>
+      </div>
+    </div>
+    <p>We take data security seriously and implement industry-standard measures to protect your information:</p>
+    <ul>
+      <li>Passwords are hashed using SHA-256 — never stored in plain text</li>
+      <li>Session tokens are secured and expire on logout</li>
+      <li>Location data is processed in real-time and not permanently stored</li>
+      <li>Recent visits are stored only in your browser's localStorage</li>
+      <li>Our database is protected against unauthorized access</li>
+    </ul>
+  </div>
+
+  <!-- Section 5 -->
+  <div class="section-card reveal" id="section5">
+    <div class="section-header">
+      <div class="section-icon" style="background:#FCE7F3;">👤</div>
+      <div>
+        <div class="section-num">Section 05</div>
+        <h2>Your Rights</h2>
+      </div>
+    </div>
+    <p>As a GuideU user, you have full control over your data:</p>
+    <ul>
+      <li>You can log out at any time to end your session</li>
+      <li>You can clear your recent visits by clearing browser localStorage</li>
+      <li>You can revoke Google OAuth access from your Google account settings</li>
+      <li>You can request account deletion by contacting the GuideU team</li>
+    </ul>
+  </div>
+
+  <!-- Section 6 -->
+  <div class="section-card reveal" id="section6">
+    <div class="section-header">
+      <div class="section-icon" style="background:#FEF3C7;">📢</div>
+      <div>
+        <div class="section-num">Section 06</div>
+        <h2>Changes to This Policy</h2>
+      </div>
+    </div>
+    <p>We reserve the right to update this Privacy Policy to reflect changes in our app or university guidelines. When we make significant changes:</p>
+    <ul>
+      <li>Changes will be communicated via your GuideU dashboard</li>
+      <li>The "Last Updated" date at the top of this page will be revised</li>
+      <li>Continued use of GuideU after changes constitutes acceptance</li>
+    </ul>
+  </div>
+
+  <!-- Contact -->
+  <div class="contact-card reveal">
+    <div class="contact-icon">✉️</div>
+    <div>
+      <h3>Questions about this policy?</h3>
+      <p>If you have any questions or concerns about how GuideU handles your data, reach out to the development team through the Bennett University student portal or raise an issue on the project repository.</p>
+    </div>
+  </div>
+
+  <!-- Back button -->
+  <a href="/" class="back-btn reveal">
+    ← Return to Home
+  </a>
+
+</div>
+
+<script>
+  const cur=document.getElementById('cursor'),ring=document.getElementById('cursor-ring');
+  let mx=0,my=0,rx=0,ry=0;
+  document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cur.style.left=mx+'px';cur.style.top=my+'px';});
+  (function anim(){rx+=(mx-rx)*.12;ry+=(my-ry)*.12;ring.style.left=rx+'px';ring.style.top=ry+'px';requestAnimationFrame(anim);})();
+
+  const obs=new IntersectionObserver(entries=>entries.forEach(e=>{
+    if(e.isIntersecting)e.target.classList.add('visible');
+  }),{threshold:0.1});
+  document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+</script>
+</body>
+</html>

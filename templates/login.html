@@ -1,39 +1,83 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
-<title>GuideU</title>
-<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GuideU | Login</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <style>
+    body { display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; }
+    .login-card { width: 100%; max-width: 420px; padding: 40px 32px 32px; position: relative; z-index: 2; }
+    .brand { text-align: center; margin-bottom: 28px; }
+    .brand h1 { font-size: 1.8rem; color: var(--blue); margin-bottom: 4px; }
+    .brand h1 span { color: var(--green); }
+    .brand p { color: var(--muted); font-size: 0.88rem; }
+    .form-footer { text-align: center; margin-top: 16px; font-size: 0.82rem; color: var(--muted); }
+    .form-footer a { color: var(--blue); font-weight: 600; text-decoration: none; }
+    .privacy-row { text-align: center; margin-top: 20px; }
+    .spinner { display: none; width: 20px; height: 20px; border: 2px solid rgba(255,255,255,0.3); border-top-color: #fff; border-radius: 50%; animation: spin .7s linear infinite; margin: 0 auto; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
 </head>
-
 <body>
-
-<div class="container">
-
-<h1 class="title">🧭 GuideU</h1>
-<p class="subtitle">Smart Campus Navigation</p>
-
-<form method="POST">
-
-<input type="text" name="username" placeholder="Username" required>
-
-<input type="password" name="password" placeholder="Password" required>
-
-<button type="submit">Login</button>
-
-</form>
-
-<br>
-
-<a href="/register">
-<button>Create Account</button>
-</a>
-
-{% if error %}
-<p>{{error}}</p>
-{% endif %}
-
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
+<div class="aurora">
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  <div class="blob blob-3"></div>
 </div>
 
+<div class="card login-card">
+  <div class="brand">
+    <h1>📍 Guide<span>U</span></h1>
+    <p>Welcome back — sign in to navigate campus</p>
+  </div>
+
+  <a class="btn-google" href="{{ url_for('google.login') }}">
+    <svg viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.31-8.16 2.31-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+    Continue with Google
+  </a>
+
+  <div class="divider">or sign in with email</div>
+
+  {% if error %}
+  <div class="error-box">⚠️ {{ error }}</div>
+  {% endif %}
+
+  <form method="POST" id="loginForm">
+    <div class="input-group">
+      <input type="text" name="username" id="username" class="input-field" placeholder=" " required autocomplete="username">
+      <label for="username" class="input-label">Username</label>
+    </div>
+    <div class="input-group">
+      <input type="password" name="password" id="password" class="input-field" placeholder=" " required autocomplete="current-password">
+      <label for="password" class="input-label">Password</label>
+    </div>
+    <button type="submit" class="btn-primary" id="signInBtn">Sign In</button>
+  </form>
+
+  <div class="form-footer" style="margin-top:14px">
+    Don't have an account? <a href="/register">Create one →</a>
+  </div>
+  <div class="privacy-row">
+    <a href="/privacy" class="footer-link">Privacy Policy</a>
+  </div>
+</div>
+
+<script>
+  const cur = document.getElementById('cursor'), ring = document.getElementById('cursor-ring');
+  let mx=0,my=0,rx=0,ry=0;
+  document.addEventListener('mousemove', e => { mx=e.clientX; my=e.clientY; cur.style.left=mx+'px'; cur.style.top=my+'px'; });
+  (function anim(){ rx+=(mx-rx)*.12; ry+=(my-ry)*.12; ring.style.left=rx+'px'; ring.style.top=ry+'px'; requestAnimationFrame(anim); })();
+
+  document.getElementById('loginForm').addEventListener('submit', function() {
+    const btn = document.getElementById('signInBtn');
+    btn.innerHTML = '<div class="spinner"></div>';
+    btn.disabled = true;
+    btn.style.display = 'flex'; btn.style.justifyContent = 'center';
+    setTimeout(() => { btn.style.display = 'block'; }, 100);
+  });
+</script>
 </body>
 </html>

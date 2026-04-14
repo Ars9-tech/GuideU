@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>GuideU | Welcome</title>
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background: url("{{ url_for('static', filename='campus_hero.png') }}") no-repeat center center/cover;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+    }
+
+    .overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,0.45);
+    }
+
+    .content {
+      position: relative;
+      text-align: center;
+      z-index: 2;
+    }
+
+    h1 {
+      font-size: 3rem;
+      font-weight: 800;
+      margin-bottom: 16px;
+    }
+
+    p {
+      font-size: 1.1rem;
+      opacity: 0.9;
+      margin-bottom: 30px;
+    }
+
+    .btn {
+      padding: 14px 28px;
+      font-size: 1rem;
+      font-weight: 700;
+      border-radius: 30px;
+      border: none;
+      background: linear-gradient(135deg, #2563EB, #1D4ED8);
+      color: white;
+      cursor: pointer;
+      text-decoration: none;
+      transition: transform 0.2s;
+    }
+
+    .btn:hover {
+      transform: scale(1.05);
+    }
+  </style>
+</head>
+<body>
+
+<div class="overlay"></div>
+
+<div class="content">
+  <h1>Welcome to Bennett University</h1>
+  <p>Your smart campus navigation companion</p>
+  <a href="/login" class="btn">Get Started →</a>
+</div>
+
+</body>
+</html>
